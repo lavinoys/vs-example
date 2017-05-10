@@ -4,12 +4,16 @@
  * windows.h 헤더 파일은 기본적인 자료 타입, 함수 원형 등을 정의하며 그외 필요한 헤더 파일을 포함하고 있다.
  */
 
-// 함수 원형 선언
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);										// 부모(메인) 창
-LRESULT CALLBACK ChildWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);	// 자식(하위) 창
+#define ID_OK_BTN	2000 //버튼 컨트롤의 ID 정의
+
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = L"HelloAPI";		// 메인 윈도우 클래스 이름(윈도우 클래스를 정의하는데 사용)
-LPCTSTR ChildClassName = L"ChildWin";	// 차일드 윈도우 클래스 이름
+LPCTSTR lpszClass = L"HelloAPI";// 메인 윈도우 클래스 이름(윈도우 클래스를 정의하는데 사용)
+LPCTSTR ChildClassName  = L"ChildWin";// 차일드 윈도우 클래스 이름
+
+// 함수 원형 선언
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // 부모(메인) 창
+LRESULT CALLBACK ChildWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam); // 자식(하위) 창
+
 
 int APIENTRY WinMain(HINSTANCE hInstance,		// APIENTRY 지정자는 _stdcall형 호출규약을 사용한다는 뜻
 					 HINSTANCE hPrevInstance,	// hlnstance 프로그램의 객체 핸들이다. 프로그램 자체를 일컫는 정수값이며 API 함수에서 수시로 사용, 이 예제에서는 WinMain의 매개변수로 전달된 hlnstance값을 전역변수 g_hInst에 대입해 둠
@@ -83,10 +87,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage,
 									(HMENU) 2000,					// 차일드 윈도우 ID
 									g_hInst,						// 객체 핸들
 									(LPVOID) NULL);					// 여분의 데이터
-				if (!hChildWnd) return -1;
-				ShowWindow(hChildWnd, SW_SHOW);
+				ShowWindow(hChildWnd, SW_SHOW); 
+
+				hChildWnd = CreateWindow(
+								L"button",        		// 윈도우 클래스 이름 
+								L"지역대학",			// 윈도우 타이틀 
+								WS_CHILD|WS_VISIBLE, 	// 윈도우 스타일 
+								20,       		// 윈도우 보일 때 x 좌표 
+								400,       		// 윈도우 보일 때 y 좌표 
+								100,       		// 윈도우 폭
+								30,       		// 윈도우 높이
+								hWnd,         		// 부모 윈도우
+								(HMENU) ID_OK_BTN,   	// 컨트롤 ID
+								g_hInst,           		// 인스턴스 핸들 
+								(LPVOID) NULL);      	// 여분의 데이터
+
+				if (!hChildWnd) return -1; //버튼이 만들어지지 않으면 종료
 				return 0;
 			}
+		case WM_COMMAND:
+		{
+			if(LOWORD(wParam) == ID_OK_BTN)
+			{
+				MessageBox(hWnd,L"[지역대학] 버튼이 클릭되었다",L"지역대학",MB_OK);
+			}
+
+			return 0;
+		}
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
